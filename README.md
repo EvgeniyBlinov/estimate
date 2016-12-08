@@ -11,13 +11,13 @@ Small meta-language for the recording estimate and evaluation of the execution t
 ## Usage 
 
 ```sh
-curl -sS example  |estimate
+curl -sS https://raw.githubusercontent.com/EvgeniyBlinov/estimate/master/example.txt |estimate
 ```
 
 ##Install
 
 ```sh
-curl -sS estimate  > /usr/local/bin/estimate
+curl -sS https://raw.githubusercontent.com/EvgeniyBlinov/estimate/master/bin/estimate  > /usr/local/bin/estimate
 chmod +x /usr/local/bin/estimate
 ```
 
