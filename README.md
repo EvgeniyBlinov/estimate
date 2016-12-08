@@ -44,6 +44,22 @@ require.js routing page(#js-notwp)            === 1
 --- ERA END main-app
 ```
 
+Result
+
+```
+______________________________________________________
+ERA_main-app: 14
+EPOCH_require.js: 9
+TAGS:
+    admin: 2
+    js-notwp: 8
+TAGS_TOTAL:10
+______________________________________________________
+TOTAL: 14
+TOTAL PAID: 20
+TOTAL REST: 120
+```
+
 ## License
 
 [![MIT License][license-image]][license-url]
