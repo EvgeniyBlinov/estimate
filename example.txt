@@ -1,0 +1,20 @@
+/*******************             2016-01-26        ****************************/
+--- ERA BEGIN main-app
+server side settings                          === 2
+vagrant(#admin)                               === 1
+paid $$$ 20
+vagrant                                       === 2
+--- EPOCH BEGIN require.js
+add doctrine migrations(#admin)               === 1
+add javascript APP.settings(#js-notwp)        === 1
+add js functions & notifications(#js-notwp)   === 1
+/*******************             2016-02-03        ****************************/
+revision symfony/gulp & rm cache(#js-notwp)   === 2
+/*******************             2016-02-04        ****************************/
+require.js + datatables bug(#js-notwp)        === 2
+/*******************             2016-02-05        ****************************/
+require.js + datatables bug(#js-notwp)        === 1
+require.js routing page(#js-notwp)            === 1
+/*******************             2016-02-07        ****************************/
+--- EPOCH END require.js
+--- ERA END main-app
