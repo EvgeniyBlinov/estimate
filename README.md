@@ -60,6 +60,10 @@ TOTAL PAID: 20
 TOTAL REST: 120
 ```
 
+## Tools
+
+[Vim snippets for estimate](https://github.com/EvgeniyBlinov/vim/blob/master/snippets/_.snippets)
+
 ## License
 
 [![MIT License][license-image]][license-url]
