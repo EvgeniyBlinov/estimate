@@ -22,6 +22,7 @@ curl -sS https://raw.githubusercontent.com/EvgeniyBlinov/estimate/master/example
 [example.txt](example.txt)
 
 ```sh
+set hour_rate=10
 /*******************             2016-01-26        ****************************/
 --- ERA BEGIN main-app
 server side settings                          === 2
@@ -63,6 +64,10 @@ TOTAL REST: 120
 ## Tools
 
 [Vim snippets for estimate](https://github.com/EvgeniyBlinov/vim/blob/master/snippets/_.snippets)
+
+### @TODO
+
+- add score for every hour_rate
 
 ## License
 

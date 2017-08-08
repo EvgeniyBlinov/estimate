@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys,getopt,re,pprint
+import sys,getopt,re,pprint,string
 
 ########################################################################
 #                        EstimateParser
@@ -23,11 +23,12 @@ class EstimateParser(object):
         self.periods        = {}
         self.tags           = {}
         self.operations = {
-            re.compile('\$\$\$\ *(\d{1,3})')  : self.foundPaid,
+            re.compile('^set\s+([^=]+)=([^$]+)$') : self.foundOption,
+            re.compile('\$\$\$\ *(\d{1,3})')     : self.foundPaid,
             # date format YYYY-mm-dd
-            re.compile('(\d{4}-\d{2}-\d{2})') : self.foundDate,
-            re.compile('===\ *(\d{1,3})')     : self.foundHours,
-            re.compile('#\s*(END\s+HOURS)\s*#') : self.setEndOf,
+            re.compile('(\d{4}-\d{2}-\d{2})')    : self.foundDate,
+            re.compile('===\ *(\d{1,3})')        : self.foundHours,
+            re.compile('#\s*(END\s+HOURS)\s*#')  : self.setEndOf,
             re.compile('--- (ERA|EPOCH)\s+(END|BEGIN)\s*([^\s][^$]+)$') : self.setPeriod
         }
 
@@ -52,6 +53,19 @@ class EstimateParser(object):
     def foundPaid(self, line, match, matches):
         self.paid += int(match)
         print self.STR_TOTAL + ": " + str(self.hours_all)
+
+    def parseStr(self, x):
+        return x.isalpha() and x or x.isdigit() and int(x) or x.isalnum() and x or len(set(string.punctuation).intersection(x)) == 1 and x.count('.') == 1 and float(x) or x
+
+    def foundOption(self, line, match, matches):
+        optionName  = matches.group(1).strip(' \t\n\r')
+        optionValue = matches.group(2).strip(' \t\n\r')
+        optionValue = self.parseStr(optionValue)
+        if hasattr(self, optionName):
+            if type(getattr(self, optionName)) == type(optionValue):
+                setattr(self, optionName, optionValue)
+                #pprint.pprint(getattr(self, optionName))
+
 
     def setPeriod(self, line, match, matches):
         periodName = matches.group(1)
