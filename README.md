@@ -17,6 +17,60 @@ chmod +x /usr/local/bin/estimate
 curl -sS https://raw.githubusercontent.com/EvgeniyBlinov/estimate/master/example.txt |estimate
 ```
 
+Advanced usage
+
+```sh
+# set hour rate to 10$ per hour
+# set exchange rate for 1 USD from cbr.ru
+# apply rate to hours file example.txt
+cat \
+    <(echo "set hour_rate = 10") \
+    <(echo "set exchange_rate = `curl -s https://www.cbr-xml-daily.ru/daily_json.js|jq .Valute.USD.Value`") \
+    <(curl -sS https://raw.githubusercontent.com/EvgeniyBlinov/estimate/master/example.txt) |
+    estimate
+```
+
+Result
+
+```sh
+
+set hour_rate = 10
+set exchange_rate = 66.9685
+/*******************             2016-01-26        ****************************/
+--- ERA BEGIN main-app
+server side settings                          === 2
+vagrant(#admin)                               === 1
+TOTAL: 3
+paid $$$ 20
+vagrant                                       === 2
+--- EPOCH BEGIN require.js
+add doctrine migrations(#admin)               === 1
+add javascript APP.settings(#js-notwp)        === 1
+add js functions & notifications(#js-notwp)   === 1
+/*******************             2016-02-03        ****************************/
+revision symfony/gulp & rm cache(#js-notwp)   === 2
+/*******************             2016-02-04        ****************************/
+require.js + datatables bug(#js-notwp)        === 2
+/*******************             2016-02-05        ****************************/
+require.js + datatables bug(#js-notwp)        === 1
+require.js routing page(#js-notwp)            === 1
+/*******************             2016-02-07        ****************************/
+--- EPOCH END require.js
+--- ERA END main-app
+______________________________________________________
+ERA_main-app: 14
+EPOCH_require.js: 9
+TAGS:
+    admin: 2
+    js-notwp: 8
+TAGS_TOTAL:10
+______________________________________________________
+TOTAL: 14
+TOTAL PAID: 20
+TOTAL REST: 120
+TOTAL MONEY: 8036.22
+```
+
 ## Example
 
 [example.txt](example.txt)
