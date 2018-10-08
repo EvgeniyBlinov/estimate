@@ -20,7 +20,7 @@ curl -sS https://raw.githubusercontent.com/EvgeniyBlinov/estimate/master/example
 Advanced usage
 
 ```sh
-# set hour rate to 10$ per hour
+# set hour rate to 10$
 # set exchange rate for 1 USD from cbr.ru
 # apply rate to hours file example.txt
 cat \
