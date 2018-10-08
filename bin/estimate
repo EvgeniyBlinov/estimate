@@ -14,11 +14,13 @@ class EstimateParser(object):
     STR_TOTAL = 'TOTAL';
     STR_PAID  = 'PAID';
     STR_REST  = 'REST';
+    STR_MONEY = 'MONEY';
 
     def __init__(self):
         self.endof          = 0;
         self.hours_all      = 0;
         self.hour_rate      = 10;
+        self.exchange_rate  = 0.0;
         self.hours_per_date = 0;
         self.paid           = 0;
         self.periods        = {}
@@ -104,6 +106,8 @@ class EstimateParser(object):
         print self.STR_TOTAL + ": " + str(self.hours_all)
         print self.STR_TOTAL + " " + self.STR_PAID + ": " + str(self.paid)
         print self.STR_TOTAL + " " + self.STR_REST + ": " + str(self.calculate_score())
+        if self.exchange_rate:
+            print self.STR_TOTAL + " " + self.STR_MONEY + ": " + str(self.calculate_score() * self.exchange_rate)
 
     def parseText(self, text):
         for line in text:
