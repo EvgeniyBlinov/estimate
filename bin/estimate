@@ -103,9 +103,9 @@ class EstimateParser(object):
 
     def printMoney(self):
         print "______________________________________________________"
-        print self.STR_TOTAL + ": " + str(self.hours_all)
-        print self.STR_TOTAL + " " + self.STR_PAID + ": " + str(self.paid)
-        print self.STR_TOTAL + " " + self.STR_REST + ": " + str(self.calculate_score())
+        print self.STR_TOTAL + " " + self.STR_HOURS + ": " + str(self.hours_all)
+        print self.STR_TOTAL + " " + self.STR_PAID  + ": " + str(self.paid)
+        print self.STR_TOTAL + " " + self.STR_REST  + ": " + str(self.calculate_score())
         if self.exchange_rate:
             print self.STR_TOTAL + " " + self.STR_MONEY + ": " + str(self.calculate_score() * self.exchange_rate)
 
