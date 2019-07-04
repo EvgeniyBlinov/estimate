@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4 ft=python
 import sys,getopt,re,pprint,string
@@ -17,22 +17,27 @@ class EstimateParser(object):
     STR_MONEY = 'MONEY';
 
     def __init__(self):
-        self.endof          = 0;
-        self.hours_all      = 0;
-        self.hour_rate      = 10;
-        self.exchange_rate  = 0.0;
-        self.hours_per_date = 0;
-        self.paid           = 0;
-        self.periods        = {}
-        self.tags           = {}
+        self.endof            = 0;
+        self.hours_all        = 0;
+        self.hour_rate        = 10;
+        self.exchange_rate    = 0.0;
+        self.hours_per_date   = 0;
+        self.paid             = 0;
+        self.periods          = {}
+        self.tags             = {}
+        self.hours_elapsed    = 0
+        self.hours_logged     = 0
+        self.hours_not_logged = 0
         self.operations = {
-            re.compile('^set\s+([^=]+)=([^$]+)$') : self.foundOption,
-            re.compile('\$\$\$\ *(\d{1,3})')     : self.foundPaid,
+            re.compile('^set\s+([^=]+)=([^$]+)$')                       : self.foundOption,
+            re.compile('\$\$\$\ *(\d{1,3})')                            : self.foundPaid,
             # date format YYYY-mm-dd
-            re.compile('(\d{4}-\d{2}-\d{2})')    : self.foundDate,
-            re.compile('===\ *(\d{1,3})')        : self.foundHours,
-            re.compile('#\s*(END\s+HOURS)\s*#')  : self.setEndOf,
-            re.compile('--- (ERA|EPOCH)\s+(END|BEGIN)\s*([^\s][^$]+)$') : self.setPeriod
+            re.compile('(\d{4}-\d{2}-\d{2})')                           : self.foundDate,
+            re.compile('===\ *(\d{1,3})')                               : self.foundHours,
+            re.compile('===\s+[\d\s:]+\~([\d\.]+)')                     : self.foundElapsed,
+            re.compile('#\s*(END\s+HOURS)\s*#')                         : self.setEndOf,
+            re.compile('--- (ERA|EPOCH)\s+(END|BEGIN)\s*([^\s][^$]+)$') : self.setPeriod,
+            #re.compile('--\-+\s+logged\s+\-+$')                         : self.loggedEnd
         }
 
     def calculate_score(self):
@@ -53,9 +58,28 @@ class EstimateParser(object):
                 self.tags[tag] = 0
             self.tags[tag] += int(match)
 
+    def foundElapsed(self, line, match, matches):
+        print('ELAPSED')
+        pprint.pprint(matches.group(1))
+        sys.exit(1)
+        self.hours_elapsed  += int(match)
+        self.hours_not_logged  += int(match)
+
+    def loggedEnd(self, line, match, matches):
+        self.hours_logged += self.hours_not_logged
+        self.hours_not_logged = 0
+
+        #self.hours_elapsed += float(match)
+
+        #self.hours_all       += int(match)
+        #for tag in re.compile('[^\w]#([-_\w0-9]+)').findall(line):
+            #if not self.tags.has_key(tag):
+                #self.tags[tag] = 0
+            #self.tags[tag] += int(match)
+
     def foundPaid(self, line, match, matches):
         self.paid += int(match)
-        print self.STR_TOTAL + ": " + str(self.hours_all)
+        print(self.STR_TOTAL + ": " + str(self.hours_all))
 
     def parseStr(self, x):
         return x.isalpha() and x or x.isdigit() and int(x) or x.isalnum() and x or len(set(string.punctuation).intersection(x)) == 1 and x.count('.') == 1 and float(x) or x
@@ -86,39 +110,39 @@ class EstimateParser(object):
                 self.periods[periodFullName]['hours'] = self.periods[periodFullName]['hours_end'] - self.periods[periodFullName]['hours_start']
 
     def printPeriods(self):
-        for name, period in self.periods.iteritems():
+        for name, period in self.periods.items():
             if not period.has_key('hours'):
                 period['hours'] = self.hours_all - period['hours_start']
-            print name + ': ' + str(period['hours'])
+            print(name + ': ' + str(period['hours']))
         #sys.exit(1)
 
     def printTags(self):
-        print 'TAGS:'
+        print('TAGS:')
         tags_all = 0
-        for name, tag in self.tags.iteritems():
+        for name, tag in self.tags.items():
             tags_all += int(tag)
-            print '    ' + name + ': ' + str(tag)
-        print 'TAGS_TOTAL:' + str(tags_all)
+            print('    ' + name + ': ' + str(tag))
+        print('TAGS_TOTAL:' + str(tags_all))
         #sys.exit(1)
 
     def printMoney(self):
-        print "______________________________________________________"
-        print self.STR_TOTAL + " " + self.STR_HOURS + ": " + str(self.hours_all)
-        print self.STR_TOTAL + " " + self.STR_PAID  + ": " + str(self.paid)
-        print self.STR_TOTAL + " " + self.STR_REST  + ": " + str(self.calculate_score())
+        print("______________________________________________________")
+        print(self.STR_TOTAL + " " + self.STR_HOURS + ": " + str(self.hours_all))
+        print(self.STR_TOTAL + " " + self.STR_PAID  + ": " + str(self.paid))
+        print(self.STR_TOTAL + " " + self.STR_REST  + ": " + str(self.calculate_score()))
         if self.exchange_rate:
-            print self.STR_TOTAL + " " + self.STR_MONEY + ": " + str(self.calculate_score() * self.exchange_rate)
+            print(self.STR_TOTAL + " " + self.STR_MONEY + ": " + str(self.calculate_score() * self.exchange_rate))
 
     def parseText(self, text):
         for line in text:
             if self.endof == 0:
-                for regex, callback in self.operations.iteritems():
+                for regex, callback in self.operations.items():
                     match = regex.search(line)
                     if match and match.group(1):
                         callback(line, match.group(1), match)
                         break
-            print line.rstrip('\n')
-        print "______________________________________________________"
+            print(line.rstrip('\n'))
+        print ("______________________________________________________")
         self.printPeriods()
         self.printTags()
         self.printMoney()
@@ -138,7 +162,7 @@ params  = {
 # usage
 def usage(status = 0):
   global verbose
-  print 'Usage: '+ os.path.basename(sys.argv[0])+' -i <file1> [option]'
+  print('Usage: '+ os.path.basename(sys.argv[0])+' -i <file1> [option]')
   sys.exit(status)
 
 # main
@@ -152,7 +176,7 @@ def main():
         )
     except getopt.GetoptError as err:
         # print help information and exit:
-        print str(err) # will print something like "option -a not recognized"
+        print(str(err)) # will print something like "option -a not recognized"
         usage(2)
     verbose = False
     for o, a in opts:
