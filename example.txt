@@ -18,8 +18,8 @@ require.js + datatables bug(#js-notwp)        === 2
 require.js + datatables bug(#js-notwp)        === 1.5
 require.js routing page(#js-notwp)            === 1
 /*******************             2016-02-07        ****************************/
-task with time only                           --- 10:00-11:30
-task with time only                           --- 11:30-12:00
+task with time only                           --- 10:00-11:19
+task with time only                           --- 11:19-12:00
 --- EPOCH END require.js
 --- ERA END main-app
 #########################  END HOURS  ##########################################

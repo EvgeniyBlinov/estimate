@@ -83,7 +83,7 @@ class EstimateParser(object):
 
         hours,minutes,seconds = map(int, str(time_delta).split(':'))
         # add minutes
-        hours += int(minutes) / 60
+        hours += round(int(minutes) / 60, 1)
 
         self.addHours(line, hours)
 
