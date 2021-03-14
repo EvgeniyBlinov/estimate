@@ -7,8 +7,7 @@ Small meta-language for the recording estimate and evaluation of the execution t
 ##Install
 
 ```sh
-curl -sS https://raw.githubusercontent.com/EvgeniyBlinov/estimate/master/bin/estimate  > /usr/local/bin/estimate
-chmod +x /usr/local/bin/estimate
+python3 -m pip install git+https://github.com/EvgeniyBlinov/estimate.git
 ```
 
 Local
