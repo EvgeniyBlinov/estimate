@@ -30,12 +30,12 @@ class EstimateParser(object):
         self.periods        = {}
         self.tags           = {}
         self.operations = {
+            re.compile('---\ *(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})')        : self.foundTime,
             re.compile('^set\s+([^=]+)=([^$]+)$')                        : self.foundOption,
             re.compile('\$\$\$\ *(\d{1,3})')                             : self.foundPaid,
             # date format YYYY-mm-dd
             re.compile('(\d{4}-\d{2}-\d{2})')                            : self.foundDate,
             re.compile('===\ *(\d{1,3}\.?\d?)')                          : self.foundHours,
-            re.compile('---\ *(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})')        : self.foundTime,
             re.compile(self.STR_BEGIN_HOURS_PATTERN)                     : self.foundBeginHours,
             re.compile('#\s*(END\s+HOURS)\s*#')                          : self.setEndOf,
             re.compile('--- (ERA|EPOCH)\s+(END|BEGIN)\s*([^\s][^$]+)$')  : self.setPeriod
@@ -86,6 +86,9 @@ class EstimateParser(object):
         hours += int(minutes) / 60
 
         self.addHours(line, hours)
+
+        new_line = line.rstrip('\n') + ' === ' + str(hours)
+        return new_line
 
 
     def foundHours(self, line, match, matches):
@@ -148,8 +151,10 @@ class EstimateParser(object):
         print(self.STR_TOTAL + " " + self.STR_HOURS + ": " + str(self.hours_all))
         print(self.STR_TOTAL + " " + self.STR_PAID  + ": " + str(self.paid))
         print(self.STR_TOTAL + " " + self.STR_REST  + ": " + str(self.calculate_score()))
-        if self.exchange_rate:
-            print(self.STR_TOTAL + " " + self.STR_MONEY + ": " + str(self.calculate_score() * self.exchange_rate))
+        exchange_rate = self.exchange_rate
+        if not exchange_rate:
+            exchange_rate = 1
+        print(self.STR_TOTAL + " " + self.STR_MONEY + ": " + str(self.calculate_score() * exchange_rate))
 
 
     def printStats(self):
@@ -165,7 +170,9 @@ class EstimateParser(object):
                 for regex, callback in self.operations.items():
                     match = regex.search(line)
                     if match and match.group(1):
-                        callback(line, match.group(1), match)
+                        result = callback(line, match.group(1), match)
+                        if result:
+                            line = result
                         break
             print(line.rstrip('\n'))
 
