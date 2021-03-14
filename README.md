@@ -16,7 +16,7 @@ Local
 ```sh
 python3 -m venv .python
 source .python/bin/activate
-python3 -m pip install git+https://github.com/EvgeniyBlinov/estimate.git@package
+python3 -m pip install git+https://github.com/EvgeniyBlinov/estimate.git
 ```
 
 ## Usage 
