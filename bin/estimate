@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4 ft=python
-import sys,getopt,re,pprint,string
+import sys,getopt,re,string
 
 ########################################################################
 #                        EstimateParser
@@ -15,6 +15,7 @@ class EstimateParser(object):
     STR_PAID  = 'PAID';
     STR_REST  = 'REST';
     STR_MONEY = 'MONEY';
+
 
     def __init__(self):
         self.endof          = 0;
@@ -35,30 +36,37 @@ class EstimateParser(object):
             re.compile('--- (ERA|EPOCH)\s+(END|BEGIN)\s*([^\s][^$]+)$') : self.setPeriod
         }
 
+
     def calculate_score(self):
         return (self.hours_all * self.hour_rate) - self.paid
+
 
     def setEndOf(self, line, match, matches):
         self.endof = 1
 
+
     def foundDate(self, line, match, matches):
-        #print "ИТОГО: " + str(self.hours_per_date)
+        #print("ИТОГО: " + str(self.hours_per_date))
         self.hours_per_date = 0
+
 
     def foundHours(self, line, match, matches):
         self.hours_per_date  += int(match)
         self.hours_all       += int(match)
         for tag in re.compile('[^\w]#([-_\w0-9]+)').findall(line):
-            if not self.tags.has_key(tag):
+            if tag not in self.tags:
                 self.tags[tag] = 0
             self.tags[tag] += int(match)
 
+
     def foundPaid(self, line, match, matches):
         self.paid += int(match)
-        print self.STR_TOTAL + ": " + str(self.hours_all)
+        print(self.STR_TOTAL + ": " + str(self.hours_all))
+
 
     def parseStr(self, x):
         return x.isalpha() and x or x.isdigit() and int(x) or x.isalnum() and x or len(set(string.punctuation).intersection(x)) == 1 and x.count('.') == 1 and float(x) or x
+
 
     def foundOption(self, line, match, matches):
         optionName  = matches.group(1).strip(' \t\n\r')
@@ -67,7 +75,6 @@ class EstimateParser(object):
         if hasattr(self, optionName):
             if type(getattr(self, optionName)) == type(optionValue):
                 setattr(self, optionName, optionValue)
-                #pprint.pprint(getattr(self, optionName))
 
 
     def setPeriod(self, line, match, matches):
@@ -76,7 +83,8 @@ class EstimateParser(object):
         periods    = matches.group(3)
         for name in periods.rstrip('\n').split('|'):
             periodFullName = periodName + '_' + name
-            if not self.periods.has_key(periodFullName):
+
+            if periodFullName not in self.periods:
                 self.periods[periodFullName] = {}
 
             if periodOp == self.STR_BEGIN:
@@ -85,40 +93,41 @@ class EstimateParser(object):
                 self.periods[periodFullName]['hours_end'] = self.hours_all
                 self.periods[periodFullName]['hours'] = self.periods[periodFullName]['hours_end'] - self.periods[periodFullName]['hours_start']
 
+
     def printPeriods(self):
-        for name, period in self.periods.iteritems():
-            if not period.has_key('hours'):
+        for name, period in self.periods.items():
+            if 'hours' not in period:
                 period['hours'] = self.hours_all - period['hours_start']
-            print name + ': ' + str(period['hours'])
-        #sys.exit(1)
+            print(name + ': ' + str(period['hours']))
+
 
     def printTags(self):
-        print 'TAGS:'
+        print('TAGS:')
         tags_all = 0
-        for name, tag in self.tags.iteritems():
+        for name, tag in self.tags.items():
             tags_all += int(tag)
-            print '    ' + name + ': ' + str(tag)
-        print 'TAGS_TOTAL:' + str(tags_all)
-        #sys.exit(1)
+            print('    ' + name + ': ' + str(tag))
+        print('TAGS_TOTAL:' + str(tags_all))
+
 
     def printMoney(self):
-        print "______________________________________________________"
-        print self.STR_TOTAL + " " + self.STR_HOURS + ": " + str(self.hours_all)
-        print self.STR_TOTAL + " " + self.STR_PAID  + ": " + str(self.paid)
-        print self.STR_TOTAL + " " + self.STR_REST  + ": " + str(self.calculate_score())
+        print("______________________________________________________")
+        print(self.STR_TOTAL + " " + self.STR_HOURS + ": " + str(self.hours_all))
+        print(self.STR_TOTAL + " " + self.STR_PAID  + ": " + str(self.paid))
+        print(self.STR_TOTAL + " " + self.STR_REST  + ": " + str(self.calculate_score()))
         if self.exchange_rate:
-            print self.STR_TOTAL + " " + self.STR_MONEY + ": " + str(self.calculate_score() * self.exchange_rate)
+            print(self.STR_TOTAL + " " + self.STR_MONEY + ": " + str(self.calculate_score() * self.exchange_rate))
 
     def parseText(self, text):
         for line in text:
             if self.endof == 0:
-                for regex, callback in self.operations.iteritems():
+                for regex, callback in self.operations.items():
                     match = regex.search(line)
                     if match and match.group(1):
                         callback(line, match.group(1), match)
                         break
-            print line.rstrip('\n')
-        print "______________________________________________________"
+            print(line.rstrip('\n'))
+        print("______________________________________________________")
         self.printPeriods()
         self.printTags()
         self.printMoney()
@@ -135,10 +144,11 @@ params  = {
     'hours-done': 0
 }
 
+
 # usage
 def usage(status = 0):
   global verbose
-  print 'Usage: '+ os.path.basename(sys.argv[0])+' -i <file1> [option]'
+  print('Usage: '+ os.path.basename(sys.argv[0])+' -i <file1> [option]')
   sys.exit(status)
 
 # main
@@ -152,7 +162,7 @@ def main():
         )
     except getopt.GetoptError as err:
         # print help information and exit:
-        print str(err) # will print something like "option -a not recognized"
+        print(str(err)) # will print something like "option -a not recognized"
         usage(2)
     verbose = False
     for o, a in opts:
