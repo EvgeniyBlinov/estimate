@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4 ft=python
 import sys,getopt
-from .estimate_parser import EstimateParser
+from estimate import EstimateParser
 
 verbose = False
 params  = {

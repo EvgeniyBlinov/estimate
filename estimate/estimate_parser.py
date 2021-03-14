@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4 ft=python
 import re,string
+import datetime
+
 
 class EstimateParser(object):
     STR_BEGIN = 'BEGIN';
@@ -13,24 +15,30 @@ class EstimateParser(object):
     STR_REST  = 'REST';
     STR_MONEY = 'MONEY';
 
+    STR_TIME_FORMAT = '%H:%M';
+    STR_BEGIN_HOURS_PATTERN = '#\s*(BEGIN\s+HOURS)\s*#';
+
 
     def __init__(self):
-        self.endof          = 0;
-        self.hours_all      = 0;
-        self.hour_rate      = 10;
-        self.exchange_rate  = 0.0;
-        self.hours_per_date = 0;
-        self.paid           = 0;
+        self.is_hours_line  = 1
+        self.endof          = 0
+        self.hours_all      = 0
+        self.hour_rate      = 10
+        self.exchange_rate  = 0.0
+        self.hours_per_date = 0
+        self.paid           = 0
         self.periods        = {}
         self.tags           = {}
         self.operations = {
-            re.compile('^set\s+([^=]+)=([^$]+)$') : self.foundOption,
-            re.compile('\$\$\$\ *(\d{1,3})')     : self.foundPaid,
+            re.compile('^set\s+([^=]+)=([^$]+)$')                        : self.foundOption,
+            re.compile('\$\$\$\ *(\d{1,3})')                             : self.foundPaid,
             # date format YYYY-mm-dd
-            re.compile('(\d{4}-\d{2}-\d{2})')    : self.foundDate,
-            re.compile('===\ *(\d{1,3})')        : self.foundHours,
-            re.compile('#\s*(END\s+HOURS)\s*#')  : self.setEndOf,
-            re.compile('--- (ERA|EPOCH)\s+(END|BEGIN)\s*([^\s][^$]+)$') : self.setPeriod
+            re.compile('(\d{4}-\d{2}-\d{2})')                            : self.foundDate,
+            re.compile('===\ *(\d{1,3}\.?\d?)')                          : self.foundHours,
+            re.compile('---\ *(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})')        : self.foundTime,
+            re.compile(self.STR_BEGIN_HOURS_PATTERN)                     : self.foundBeginHours,
+            re.compile('#\s*(END\s+HOURS)\s*#')                          : self.setEndOf,
+            re.compile('--- (ERA|EPOCH)\s+(END|BEGIN)\s*([^\s][^$]+)$')  : self.setPeriod
         }
 
 
@@ -38,22 +46,50 @@ class EstimateParser(object):
         return (self.hours_all * self.hour_rate) - self.paid
 
 
-    def setEndOf(self, line, match, matches):
-        self.endof = 1
-
-
-    def foundDate(self, line, match, matches):
-        #print("ИТОГО: " + str(self.hours_per_date))
-        self.hours_per_date = 0
-
-
-    def foundHours(self, line, match, matches):
-        self.hours_per_date  += int(match)
-        self.hours_all       += int(match)
+    def addHours(self, line: str, hours: float):
+        self.hours_per_date  += hours
+        self.hours_all       += hours
         for tag in re.compile('[^\w]#([-_\w0-9]+)').findall(line):
             if tag not in self.tags:
                 self.tags[tag] = 0
-            self.tags[tag] += int(match)
+            self.tags[tag] += hours
+
+
+    def setEndOf(self, line, match, matches):
+        self.endof          = 1
+        self.is_hours_line  = 0
+
+        self.printStats()
+
+
+    def foundBeginHours(self, line, match, matches):
+        self.is_hours_line  = 1
+
+        # clean
+        self.hours_all      = 0
+        self.hours_per_date = 0
+        self.paid           = 0
+
+
+    def foundDate(self, line, match, matches):
+        #print("TOTAL BY DAY: " + str(self.hours_per_date))
+        self.hours_per_date = 0
+
+
+    def foundTime(self, line, match, matches):
+        time_begin = datetime.datetime.strptime(matches.group(1), self.STR_TIME_FORMAT)
+        time_end   = datetime.datetime.strptime(matches.group(2), self.STR_TIME_FORMAT)
+        time_delta = time_end - time_begin
+
+        hours,minutes,seconds = map(int, str(time_delta).split(':'))
+        # add minutes
+        hours += int(minutes) / 60
+
+        self.addHours(line, hours)
+
+
+    def foundHours(self, line, match, matches):
+        self.addHours(line, float(match))
 
 
     def foundPaid(self, line, match, matches):
@@ -115,6 +151,14 @@ class EstimateParser(object):
         if self.exchange_rate:
             print(self.STR_TOTAL + " " + self.STR_MONEY + ": " + str(self.calculate_score() * self.exchange_rate))
 
+
+    def printStats(self):
+        print("______________________________________________________")
+        self.printPeriods()
+        self.printTags()
+        self.printMoney()
+
+
     def parseText(self, text):
         for line in text:
             if self.endof == 0:
@@ -124,7 +168,7 @@ class EstimateParser(object):
                         callback(line, match.group(1), match)
                         break
             print(line.rstrip('\n'))
-        print("______________________________________________________")
-        self.printPeriods()
-        self.printTags()
-        self.printMoney()
+
+        # print stats if END HOURS not found
+        if self.endof == 0:
+            self.printStats()

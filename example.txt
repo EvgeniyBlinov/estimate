@@ -1,3 +1,5 @@
+Some information may be here (not hours)      === 1
+#########################  BEGIN HOURS  ########################################
 /*******************             2016-01-26        ****************************/
 --- ERA BEGIN main-app
 server side settings                          === 2
@@ -13,8 +15,15 @@ revision symfony/gulp & rm cache(#js-notwp)   === 2
 /*******************             2016-02-04        ****************************/
 require.js + datatables bug(#js-notwp)        === 2
 /*******************             2016-02-05        ****************************/
-require.js + datatables bug(#js-notwp)        === 1
+require.js + datatables bug(#js-notwp)        === 1.5
 require.js routing page(#js-notwp)            === 1
 /*******************             2016-02-07        ****************************/
+task with time only                           --- 10:00-11:30
+task with time only                           --- 11:30-12:00
 --- EPOCH END require.js
 --- ERA END main-app
+#########################  END HOURS  ##########################################
+
+Some tasks may be here (not hours)     === 1
+Or other description   (not hours too) === 1
+
