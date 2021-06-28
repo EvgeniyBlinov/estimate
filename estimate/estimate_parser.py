@@ -18,6 +18,8 @@ class EstimateParser(object):
     STR_TIME_FORMAT = '%H:%M';
     STR_BEGIN_HOURS_PATTERN = '#\s*(BEGIN\s+HOURS)\s*#';
 
+    STR_PATTERN_TAG = '[^\w]#([-_\w0-9]+)'
+
 
     def __init__(self):
         self.is_hours_line  = 1
@@ -41,6 +43,12 @@ class EstimateParser(object):
             re.compile('--- (ERA|EPOCH)\s+(END|BEGIN)\s*([^\s][^$]+)$')  : self.setPeriod
         }
 
+    def usage(self):
+        usageMsg = 'Patterns:' + "\n"
+        usageMsg += ('\tTag pattern\t-\t"%s"' % self.STR_PATTERN_TAG )
+
+        return usageMsg
+
 
     def calculate_score(self):
         return (self.hours_all * self.hour_rate) - self.paid
@@ -49,7 +57,7 @@ class EstimateParser(object):
     def addHours(self, line: str, hours: float):
         self.hours_per_date  += hours
         self.hours_all       += hours
-        for tag in re.compile('[^\w]#([-_\w0-9]+)').findall(line):
+        for tag in re.compile(self.STR_PATTERN_TAG).findall(line):
             if tag not in self.tags:
                 self.tags[tag] = 0
             self.tags[tag] += hours
