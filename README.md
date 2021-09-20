@@ -33,7 +33,7 @@ Advanced usage
 cat \
     <(echo "set hour_rate = 10") \
     <(echo "set exchange_rate = `curl -s https://www.cbr-xml-daily.ru/daily_json.js|jq .Valute.USD.Value`") \
-    <(curl -sS https://raw.githubusercontent.com/EvgeniyBlinov/estimate/master/example.txt) |
+    <(curl -sS https://raw.githubusercontent.com/EvgeniyBlinov/estimate/master/tests/example.txt) |
     estimate
 ```
 

@@ -21,7 +21,7 @@ class EstimateParser(object):
     STR_PATTERN_TAG = '[^\w]#([-_\w0-9]+)'
 
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.is_hours_line  = 1
         self.endof          = 0
         self.hours_all      = 0
@@ -43,18 +43,18 @@ class EstimateParser(object):
             re.compile('--- (ERA|EPOCH)\s+(END|BEGIN)\s*([^\s][^$]+)$')  : self.setPeriod
         }
 
-    def usage(self):
+    def usage(self) -> str:
         usageMsg = 'Patterns:' + "\n"
         usageMsg += ('\tTag pattern\t-\t"%s"' % self.STR_PATTERN_TAG )
 
         return usageMsg
 
 
-    def calculate_score(self):
+    def calculate_score(self) -> str:
         return (self.hours_all * self.hour_rate) - self.paid
 
 
-    def addHours(self, line: str, hours: float):
+    def addHours(self, line: str, hours: float) -> None:
         self.hours_per_date  += hours
         self.hours_all       += hours
         for tag in re.compile(self.STR_PATTERN_TAG).findall(line):
@@ -63,14 +63,14 @@ class EstimateParser(object):
             self.tags[tag] += hours
 
 
-    def setEndOf(self, line, match, matches):
+    def setEndOf(self, line, match, matches) -> None:
         self.endof          = 1
         self.is_hours_line  = 0
 
         self.printStats()
 
 
-    def foundBeginHours(self, line, match, matches):
+    def foundBeginHours(self, line, match, matches) -> None:
         self.is_hours_line  = 1
 
         # clean
@@ -79,12 +79,12 @@ class EstimateParser(object):
         self.paid           = 0
 
 
-    def foundDate(self, line, match, matches):
+    def foundDate(self, line, match, matches) -> None:
         #print("TOTAL BY DAY: " + str(self.hours_per_date))
         self.hours_per_date = 0
 
 
-    def foundTime(self, line, match, matches):
+    def foundTime(self, line, match, matches) -> str:
         time_begin = datetime.datetime.strptime(matches.group(1), self.STR_TIME_FORMAT)
         time_end   = datetime.datetime.strptime(matches.group(2), self.STR_TIME_FORMAT)
         time_delta = time_end - time_begin
@@ -99,11 +99,11 @@ class EstimateParser(object):
         return new_line
 
 
-    def foundHours(self, line, match, matches):
+    def foundHours(self, line, match, matches) -> None:
         self.addHours(line, float(match))
 
 
-    def foundPaid(self, line, match, matches):
+    def foundPaid(self, line, match, matches) -> None:
         self.paid += int(match)
         print(self.STR_TOTAL + ": " + str(self.hours_all))
 
@@ -112,7 +112,7 @@ class EstimateParser(object):
         return x.isalpha() and x or x.isdigit() and int(x) or x.isalnum() and x or len(set(string.punctuation).intersection(x)) == 1 and x.count('.') == 1 and float(x) or x
 
 
-    def foundOption(self, line, match, matches):
+    def foundOption(self, line, match, matches) -> None:
         optionName  = matches.group(1).strip(' \t\n\r')
         optionValue = matches.group(2).strip(' \t\n\r')
         optionValue = self.parseStr(optionValue)
@@ -121,7 +121,7 @@ class EstimateParser(object):
                 setattr(self, optionName, optionValue)
 
 
-    def setPeriod(self, line, match, matches):
+    def setPeriod(self, line, match, matches) -> None:
         periodName = matches.group(1)
         periodOp   = matches.group(2)
         periods    = matches.group(3)
@@ -138,14 +138,14 @@ class EstimateParser(object):
                 self.periods[periodFullName]['hours'] = self.periods[periodFullName]['hours_end'] - self.periods[periodFullName]['hours_start']
 
 
-    def printPeriods(self):
+    def printPeriods(self) -> None:
         for name, period in self.periods.items():
             if 'hours' not in period:
                 period['hours'] = self.hours_all - period['hours_start']
             print(name + ': ' + str(period['hours']))
 
 
-    def printTags(self):
+    def printTags(self) -> None:
         print('TAGS:')
         tags_all = 0
         for name, tag in self.tags.items():
@@ -154,7 +154,7 @@ class EstimateParser(object):
         print('TAGS_TOTAL:' + str(tags_all))
 
 
-    def printMoney(self):
+    def printMoney(self) -> None:
         print("______________________________________________________")
         print(self.STR_TOTAL + " " + self.STR_HOURS + ": " + str(self.hours_all))
         print(self.STR_TOTAL + " " + self.STR_PAID  + ": " + str(self.paid))
@@ -165,14 +165,14 @@ class EstimateParser(object):
         print(self.STR_TOTAL + " " + self.STR_MONEY + ": " + str(self.calculate_score() * exchange_rate))
 
 
-    def printStats(self):
+    def printStats(self) -> None:
         print("______________________________________________________")
         self.printPeriods()
         self.printTags()
         self.printMoney()
 
 
-    def parseText(self, text):
+    def parseText(self, text) -> None:
         for line in text:
             if self.endof == 0:
                 for regex, callback in self.operations.items():

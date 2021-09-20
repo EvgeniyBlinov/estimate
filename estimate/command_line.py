@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4 ft=python
 import sys,os,getopt
-from estimate import EstimateParser
+from estimate_parser import EstimateParser
 
 
 class CliRunner(object):
@@ -19,7 +19,11 @@ class CliRunner(object):
 
 
     def usage(self, status = 0):
-        usageMsg = 'Usage: '+ os.path.basename(sys.argv[0])+' -i <file1> [option]' + "\n"
+        """Print usage and exit"""
+        filename = os.path.basename(sys.argv[0])
+        if not filename:
+            filename = 'estimate'
+        usageMsg = 'Usage: ' + filename + ' <file>' + "\n"
         usageMsg += self.parser.usage()
         print(usageMsg)
         sys.exit(status)
@@ -36,6 +40,8 @@ class CliRunner(object):
             # print help information and exit:
             print(str(err)) # will print something like "option -a not recognized"
             self.usage(2)
+
+
         for o, a in opts:
             if o == "-v":
                 self.verbose = True
@@ -48,7 +54,17 @@ class CliRunner(object):
             else:
                 assert False, "unhandled option"
                 self.usage()
-        self.parser.parseText(sys.stdin)
+
+        # @TODO:  <20-09-21, Evgeniy Blinov <evgeniy_blinov@mail.ru>> :
+        if args:
+            file = args.pop()
+            if file in ('-', '/dev/stdin'):
+                self.parser.parseText(sys.stdin)
+            else:
+                with open(file, 'r') as f:
+                    self.parser.parseText(f)
+        else:
+            self.parser.parseText(sys.stdin)
 
 
 if __name__ == "__main__":
