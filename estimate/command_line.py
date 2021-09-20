@@ -70,6 +70,10 @@ class CliRunner(object):
             self.parser.parseText(sys.stdin)
 
 
+def main():
+    cli = CliRunner()
+    cli.run()
+
 if __name__ == "__main__":
     cli = CliRunner()
     cli.run()
