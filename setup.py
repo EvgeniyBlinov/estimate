@@ -14,7 +14,7 @@ setup(
     name='estimate',
     version='0.0.1',
     packages=find_packages(),
-    long_description=open(join(dirname(__file__), 'README.txt')).read(),
+    long_description=open(join(dirname(__file__), 'README.md')).read(),
     #install_requires=install_reqs,
     entry_points={
         'console_scripts': ['estimate=estimate.command_line:main'],
