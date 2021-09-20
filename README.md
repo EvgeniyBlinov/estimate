@@ -80,7 +80,7 @@ TOTAL MONEY: 8036.22
 
 ## Example
 
-[example.txt](example.txt)
+[./tests/example.txt](./tests/example.txt)
 
 ```sh
 set hour_rate=10
