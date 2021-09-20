@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4 ft=python
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 import sys,os,getopt
-from estimate_parser import EstimateParser
+from estimate import EstimateParser
 
 
 class CliRunner(object):
