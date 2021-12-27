@@ -16,6 +16,7 @@ class CliRunner(object):
         self.params  = {
             'show': 'all',
             'hours-only': False,
+            'show-stats': True,
             'hours-done': 0
         }
         self.parser = EstimateParser()
@@ -36,8 +37,8 @@ class CliRunner(object):
         try:
             opts, args = getopt.getopt(
                 sys.argv[1:],
-                "hdvH",
-                ["help", "done", "verbose", "hours-only"]
+                "hdvHS",
+                ["help", "done", "verbose", "hours-only", "without-stats"]
             )
         except getopt.GetoptError as err:
             # print help information and exit:
@@ -54,6 +55,8 @@ class CliRunner(object):
                 self.params['show'] = 'done'
             elif o in ("-H", "--hours-only"):
                 self.params['hours-only'] = True
+            elif o in ("-S", "--without-stats"):
+                self.params['show-stats'] = False
             else:
                 assert False, "unhandled option"
                 self.usage()
@@ -68,6 +71,10 @@ class CliRunner(object):
                     self.parser.parseText(f)
         else:
             self.parser.parseText(sys.stdin)
+
+        if self.params['show-stats']:
+            if self.parser.endof == 0:
+                self.parser.printStats()
 
 
 def main():
