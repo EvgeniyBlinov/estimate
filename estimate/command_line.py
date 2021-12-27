@@ -6,68 +6,68 @@ __metaclass__ = type
 
 import sys,os,getopt
 from estimate import EstimateParser
+import argparse
 
 
 class CliRunner(object):
 
-
     def __init__(self):
+        self.ARGS = "hdvHS"
+
         self.verbose = False
         self.params  = {
             'show': 'all',
             'hours-only': False,
+            'show-stats': True,
             'hours-done': 0
         }
         self.parser = EstimateParser()
+        self.parse_args()
 
 
-    def usage(self, status = 0):
-        """Print usage and exit"""
-        filename = os.path.basename(sys.argv[0])
-        if not filename:
-            filename = 'estimate'
-        usageMsg = 'Usage: ' + filename + ' <file>' + "\n"
-        usageMsg += self.parser.usage()
-        print(usageMsg)
-        sys.exit(status)
+    def parse_args(self):
+      parser = argparse.ArgumentParser(description='estimate')
+
+      parser.add_argument(
+          "-v", "--verbose",
+          help="increase output verbosity",
+          action="store_true")
+
+      parser.add_argument(
+          "-d", "--done",
+          help="show done",
+          action="store_true")
+
+      parser.add_argument(
+          "-H", "--hours-only",
+          help="show hours only",
+          action="store_true")
+
+      parser.add_argument(
+          "-S", "--without-stats",
+          help="Don't show stats",
+          action="store_true")
+
+      parser.add_argument('infile', nargs='?', type=argparse.FileType('r'),
+            default=sys.stdin)
+
+      args = parser.parse_args()
+
+      if args.verbose:
+        self.verbose = True
+      if args.done:
+        self.params['show'] = 'done'
+      if args.hours_only:
+        self.params['hours-only'] = True
+      if args.without_stats:
+        self.params['show-stats'] = False
+
+      self.infile = args.infile
 
 
     def run(self):
-        try:
-            opts, args = getopt.getopt(
-                sys.argv[1:],
-                "hdvH",
-                ["help", "done", "verbose", "hours-only"]
-            )
-        except getopt.GetoptError as err:
-            # print help information and exit:
-            print(str(err)) # will print something like "option -a not recognized"
-            self.usage(2)
-
-
-        for o, a in opts:
-            if o == "-v":
-                self.verbose = True
-            elif o in ("-h", "--help"):
-                self.usage()
-            elif o in ("-d", "--done"):
-                self.params['show'] = 'done'
-            elif o in ("-H", "--hours-only"):
-                self.params['hours-only'] = True
-            else:
-                assert False, "unhandled option"
-                self.usage()
-
-        # @TODO:  <20-09-21, Evgeniy Blinov <evgeniy_blinov@mail.ru>> :
-        if args:
-            file = args.pop()
-            if file in ('-', '/dev/stdin'):
-                self.parser.parseText(sys.stdin)
-            else:
-                with open(file, 'r') as f:
-                    self.parser.parseText(f)
-        else:
-            self.parser.parseText(sys.stdin)
+        self.parser.show_stats = int(self.params['show-stats'])
+        self.parser.parseText(self.infile)
 
 
 def main():
@@ -75,5 +75,4 @@ def main():
     cli.run()
 
 if __name__ == "__main__":
-    cli = CliRunner()
-    cli.run()
+    main()

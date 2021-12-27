@@ -140,6 +140,12 @@ TOTAL REST: 120
 
 [Vim snippets for estimate](https://github.com/EvgeniyBlinov/vim/blob/master/snippets/_.snippets)
 
+### DEBUG
+
+```
+python3 -m pip install -U  git+file://${PWD} estimate
+```
+
 ### @TODO
 
 - add score for every hour_rate

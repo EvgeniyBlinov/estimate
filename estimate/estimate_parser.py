@@ -22,6 +22,7 @@ class EstimateParser(object):
 
 
     def __init__(self) -> None:
+        self.show_stats     = 1
         self.is_hours_line  = 1
         self.endof          = 0
         self.hours_all      = 0
@@ -166,10 +167,11 @@ class EstimateParser(object):
 
 
     def printStats(self) -> None:
-        print("______________________________________________________")
-        self.printPeriods()
-        self.printTags()
-        self.printMoney()
+        if self.show_stats:
+            print("______________________________________________________")
+            self.printPeriods()
+            self.printTags()
+            self.printMoney()
 
 
     def parseText(self, text) -> None:
