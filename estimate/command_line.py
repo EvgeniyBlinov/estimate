@@ -39,6 +39,11 @@ class CliRunner(object):
           action="store_true")
 
       parser.add_argument(
+          "-D", "--show-day-hours",
+          help="show hours per date",
+          action="store_true")
+
+      parser.add_argument(
           "-H", "--hours-only",
           help="show hours only",
           action="store_true")
@@ -57,6 +62,8 @@ class CliRunner(object):
         self.verbose = True
       if args.done:
         self.params['show'] = 'done'
+      if args.show_day_hours:
+        self.parser.show_hours_per_date = 1
       if args.hours_only:
         self.params['hours-only'] = True
       if args.without_stats:

@@ -22,16 +22,17 @@ class EstimateParser(object):
 
 
     def __init__(self) -> None:
-        self.show_stats     = 1
-        self.is_hours_line  = 1
-        self.endof          = 0
-        self.hours_all      = 0
-        self.hour_rate      = 10
-        self.exchange_rate  = 0.0
-        self.hours_per_date = 0
-        self.paid           = 0
-        self.periods        = {}
-        self.tags           = {}
+        self.show_stats          = 1
+        self.show_hours_per_date = 0
+        self.is_hours_line       = 1
+        self.endof               = 0
+        self.hours_all           = 0
+        self.hour_rate           = 10
+        self.exchange_rate       = 0.0
+        self.hours_per_date      = 0
+        self.paid                = 0
+        self.periods             = {}
+        self.tags                = {}
         self.operations = {
             re.compile('---\ *(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})')        : self.foundTime,
             re.compile('^set\s+([^=]+)=([^$]+)$')                        : self.foundOption,
@@ -81,7 +82,8 @@ class EstimateParser(object):
 
 
     def foundDate(self, line, match, matches) -> None:
-        #print("TOTAL BY DAY: " + str(self.hours_per_date))
+        if self.show_hours_per_date:
+            print("TOTAL BY DAY: " + str(self.hours_per_date))
         self.hours_per_date = 0
 
 
