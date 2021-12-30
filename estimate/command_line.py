@@ -3,6 +3,8 @@
 # vim: ai ts=4 sts=4 et sw=4 ft=python
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
+from ._version import __version__
+
 
 import sys,os,getopt
 from estimate import EstimateParser
@@ -27,6 +29,11 @@ class CliRunner(object):
 
     def parse_args(self):
       parser = argparse.ArgumentParser(description='estimate')
+
+      parser.add_argument(
+          '-V', '--version',
+          action='version',
+          version='%(prog)s {version}'.format(version=__version__))
 
       parser.add_argument(
           "-v", "--verbose",
