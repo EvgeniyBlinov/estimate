@@ -81,10 +81,15 @@ class EstimateParser(object):
         self.paid           = 0
 
 
-    def foundDate(self, line, match, matches) -> None:
+    def setEndDate(self) -> None:
         if self.show_hours_per_date:
-            print("TOTAL BY DAY: " + str(self.hours_per_date))
+            if self.hours_per_date > 0:
+                print("TOTAL BY DAY: " + str(self.hours_per_date))
         self.hours_per_date = 0
+
+
+    def foundDate(self, line, match, matches) -> None:
+        self.setEndDate()
 
 
     def foundTime(self, line, match, matches) -> str:
@@ -191,3 +196,5 @@ class EstimateParser(object):
         # print stats if END HOURS not found
         if self.endof == 0:
             self.printStats()
+
+        self.setEndDate()
