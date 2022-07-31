@@ -123,7 +123,9 @@ class EstimateParser(object):
         if hours_fixed and hours_fixed.group(1):
             self.cursor_hours = hours_fixed.group(1)
             if self.tracker and self.logged_found == 1:
-                new_line = self.tracker.track(line.rstrip('\n'), self)
+                current_logged = re.compile('(!logged)').search(line)
+                if not (current_logged and current_logged.group(1)):
+                    new_line = self.tracker.track(line.rstrip('\n'), self)
         else:
             new_line = line.rstrip('\n') + ' === ' + str(hours)
 
