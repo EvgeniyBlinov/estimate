@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4 ft=python
+from typing import Callable
 import re,string
 import datetime
+from re import Match
 
 
 class EstimateParser(object):
@@ -22,6 +24,9 @@ class EstimateParser(object):
 
 
     def __init__(self) -> None:
+        self.cursor_date         = None
+        self.logged_found        = 0
+        self.cursor_hours        = 0
         self.show_stats          = 1
         self.show_hours_per_date = 0
         self.is_hours_line       = 1
@@ -34,6 +39,7 @@ class EstimateParser(object):
         self.periods             = {}
         self.tags                = {}
         self.operations = {
+            re.compile('---\s*(logged)\s*---')                           : self.foundLogged,
             re.compile('---\ *(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})')        : self.foundTime,
             re.compile('^set\s+([^=]+)=([^$]+)$')                        : self.foundOption,
             re.compile('\$\$\$\ *(\d{1,3})')                             : self.foundPaid,
@@ -44,6 +50,8 @@ class EstimateParser(object):
             re.compile('#\s*(END\s+HOURS)\s*#')                          : self.setEndOf,
             re.compile('--- (ERA|EPOCH)\s+(END|BEGIN)\s*([^\s][^$]+)$')  : self.setPeriod
         }
+
+        self.tracker = None
 
     def usage(self) -> str:
         usageMsg = 'Patterns:' + "\n"
@@ -72,6 +80,10 @@ class EstimateParser(object):
         self.printStats()
 
 
+    def foundLogged(self, line, match, matches):
+        self.logged_found = 1
+
+
     def foundBeginHours(self, line, match, matches) -> None:
         self.is_hours_line  = 1
 
@@ -88,7 +100,8 @@ class EstimateParser(object):
         self.hours_per_date = 0
 
 
-    def foundDate(self, line, match, matches) -> None:
+    def foundDate(self, line, match, matches: Match) -> None:
+        self.cursor_date = matches.group(1)
         self.setEndDate()
 
 
@@ -103,7 +116,17 @@ class EstimateParser(object):
 
         self.addHours(line, hours)
 
-        new_line = line.rstrip('\n') + ' === ' + str(hours)
+
+        ## do not add hours if exists
+        new_line = line.rstrip('\n')
+        hours_fixed = re.compile('===\ *(\d{1,3}\.?\d?)').search(line)
+        if hours_fixed and hours_fixed.group(1):
+            self.cursor_hours = hours_fixed.group(1)
+            if self.tracker and self.logged_found == 1:
+                new_line = self.tracker.track(line.rstrip('\n'), self)
+        else:
+            new_line = line.rstrip('\n') + ' === ' + str(hours)
+
         return new_line
 
 
@@ -191,6 +214,7 @@ class EstimateParser(object):
                         if result:
                             line = result
                         break
+
             print(line.rstrip('\n'))
 
         # print stats if END HOURS not found
