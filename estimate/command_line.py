@@ -24,7 +24,7 @@ class TrackerCmd(object):
 
     def track(self, line: str, ep: EstimateParser) -> str:
         """docstring for track"""
-        trackerCmd = '%s %s %s %s "%s" "%s"' % (self.trackerProgramm, self.getTaskId(line), self.getTime(ep.cursor_hours), ep.cursor_date, self.track_type, line)
+        trackerCmd = '%s %s %s %s "%s" "%s"' % (self.trackerProgramm, self.getTaskId(line), self.getTime(str(ep.cursor_hours)), ep.cursor_date, self.track_type, line)
         result = subprocess.check_output(trackerCmd, stderr=subprocess.STDOUT, shell=True)
         status = 'not_logged'
         if str(result).find('WorkItem created') != -1:
