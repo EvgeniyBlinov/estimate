@@ -119,9 +119,8 @@ class EstimateParser(object):
         hours_fixed = re.compile('===\ *(\d{1,3}\.?\d?)').search(line)
         if hours_fixed and hours_fixed.group(1):
             ## set hours from fixed
-            hours = int(hours_fixed.group(1))
+            hours = float(hours_fixed.group(1))
             self.cursor_hours = hours
-            print(hours)
             if self.tracker and self.logged_found == 1:
                 current_logged = re.compile('(!logged)').search(line)
                 if not (current_logged and current_logged.group(1)):
