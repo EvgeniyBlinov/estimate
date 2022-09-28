@@ -142,9 +142,18 @@ TOTAL REST: 120
 
 ### DEBUG
 
+Debug module from local directory
+
+```
+python3 -m pip install -e .
+```
+
+Install from dir for installation checking
+
 ```
 python3 -m pip install -U  git+file://${PWD} estimate
 ```
+
 
 ### @TODO
 

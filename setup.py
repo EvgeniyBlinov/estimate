@@ -12,7 +12,7 @@ def parse_requirements(filename):
 
 setup(
     name='estimate',
-    version='0.0.4',
+    version='0.0.10',
     packages=find_packages(),
     long_description=open(join(dirname(__file__), 'README.md')).read(),
     #install_requires=install_reqs,

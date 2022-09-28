@@ -114,20 +114,22 @@ class EstimateParser(object):
         # add minutes
         hours += round(int(minutes) / 60, 1)
 
-        self.addHours(line, hours)
-
-
         ## do not add hours if exists
         new_line = line.rstrip('\n')
         hours_fixed = re.compile('===\ *(\d{1,3}\.?\d?)').search(line)
         if hours_fixed and hours_fixed.group(1):
-            self.cursor_hours = hours_fixed.group(1)
+            ## set hours from fixed
+            hours = int(hours_fixed.group(1))
+            self.cursor_hours = hours
+            print(hours)
             if self.tracker and self.logged_found == 1:
                 current_logged = re.compile('(!logged)').search(line)
                 if not (current_logged and current_logged.group(1)):
                     new_line = self.tracker.track(line.rstrip('\n'), self)
         else:
             new_line = line.rstrip('\n') + ' === ' + str(hours)
+
+        self.addHours(line, hours)
 
         return new_line
 
