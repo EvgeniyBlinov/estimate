@@ -9,10 +9,10 @@ def parse_requirements(filename):
     return [line for line in lineiter if line and not line.startswith("#")]
 
 #install_reqs = parse_requirements('requirements.txt')
+with open('estimate/_version.py') as f:  exec(f.read())
 
 setup(
     name='estimate',
-    version='0.0.10',
     packages=find_packages(),
     long_description=open(join(dirname(__file__), 'README.md')).read(),
     #install_requires=install_reqs,
