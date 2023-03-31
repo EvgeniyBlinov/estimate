@@ -1,35 +1,28 @@
-set name = default
-set hour_rate = 10
-set exchange_rate = 66.9685
 Some information may be here (not hours)      === 1
 #########################  BEGIN HOURS  ########################################
-/*******************             2016-01-26        ****************************/
---- ERA BEGIN main-app
+/*******************             2016-01-30        ****************************/
+--- ERA BEGIN main
 server side settings                          === 2
-vagrant(#admin)                               === 1
+vagrant(#back)                                === 1
 paid $$$ 20
 vagrant                                       === 2
---- EPOCH BEGIN require.js
-add doctrine migrations(#admin)               === 1
-add javascript APP.settings(#js-notwp)        === 1
-add js functions & notifications(#js-notwp)   === 1
+--- EPOCH BEGIN frontend
+add doctrine migrations(#back)                === 1
+add javascript APP.settings(#js-some)         === 1
+add js functions & notifications(#js-some)    === 1
 /*******************             2016-02-03        ****************************/
-revision symfony/gulp & rm cache(#js-notwp)   === 2
+revision symfony/gulp & rm cache(#js-some)    === 2
 /*******************             2016-02-04        ****************************/
-require.js + datatables bug(#js-notwp)        === 2
+require.js + datatables bug(#js-some)         === 2
 /*******************             2016-02-05        ****************************/
-require.js + datatables bug(#js-notwp)        === 1.5
-require.js routing page(#js-notwp)            === 1
+require.js + datatables bug(#js-some)         === 1.5
+require.js routing page(#js-some)             === 1
 /*******************             2016-02-07        ****************************/
 task with time only                           --- 10:00-11:19
 task with time only                           --- 11:19-12:00
 task with time and fixed                      --- 12:00-13:45 === 1.5
---- EPOCH END require.js
---- ERA END main-app
-
---- PROJECT BEGIN petproject2 ~/PROJECTS/src/github.com/evgeniyblinov/estimate/tests/example2.txt
-# 2023-03-13 - 2023-03-29
---- PROJECT END petproject2
+--- EPOCH END frontend
+--- ERA END main
 #########################  END HOURS  ##########################################
 
 Some tasks may be here (not hours)     === 1

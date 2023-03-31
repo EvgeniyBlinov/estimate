@@ -1,3 +1,6 @@
+set name = default
+set hour_rate = 10
+set exchange_rate = 66.9685
 Some information may be here (not hours)      === 1
 #########################  BEGIN HOURS  ########################################
 /*******************             2016-01-26        ****************************/
@@ -24,6 +27,13 @@ task with time only                           --- 11:19-12:00 === 0.7
 task with time and fixed                      --- 12:00-13:45 === 1.5
 --- EPOCH END require.js
 --- ERA END main-app
+
+TOTAL: 3.0
+--- PROJECT BEGIN petproject2 ~/PROJECTS/src/github.com/evgeniyblinov/estimate/tests/example2.txt
+# 2023-03-13 - 2023-03-29
+--- PROJECT END petproject2
+______________________________________________________
+PROJECT default
 ______________________________________________________
 ERA_main-app: 18.0
 EPOCH_require.js: 13.0
@@ -35,7 +45,23 @@ ______________________________________________________
 TOTAL HOURS: 18.0
 TOTAL PAID: 20
 TOTAL REST: 160.0
+TOTAL MONEY: 10714.960000000001
+______________________________________________________
+______________________________________________________
+PROJECT petproject2
+______________________________________________________
+ERA_main: 18.0
+EPOCH_frontend: 13.0
+TAGS:
+    back: 2.0
+    js-some: 8.5
+TAGS_TOTAL:10
+______________________________________________________
+TOTAL HOURS: 18.0
+TOTAL PAID: 20
+TOTAL REST: 160.0
 TOTAL MONEY: 160.0
+______________________________________________________
 #########################  END HOURS  ##########################################
 
 Some tasks may be here (not hours)     === 1

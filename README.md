@@ -90,6 +90,8 @@ Or other description   (not hours too) === 1
 [./tests/example.txt](./tests/example.txt)
 
 ```sh
+set hour_rate = 10
+set exchange_rate = 66.9685
 Some information may be here (not hours)      === 1
 #########################  BEGIN HOURS  ########################################
 /*******************             2016-01-26        ****************************/
